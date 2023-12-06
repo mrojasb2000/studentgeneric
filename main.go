@@ -2,40 +2,52 @@ package main
 
 import "fmt"
 
-func addStudent(students []string, student string) []string {
-	return append(students, student)
+type Stringer = interface {
+	String() string
 }
 
-func addStudentID(students []int, student int) []int {
-	return append(students, student)
+type Integer int
+
+func (i Integer) String() string {
+	return fmt.Sprintf("%d", i)
+}
+
+type String string
+
+func (s String) String() string {
+	return string(s)
 }
 
 type Student struct {
 	Name string
 	ID   int
-	age  float64
+	Age  float64
 }
 
-func addStudentStruct(students []Student, student Student) []Student {
+func (s Student) String() string {
+	return fmt.Sprintf("%s %d %0.2f", s.Name, s.ID, s.Age)
+}
+
+func addStudent[T Stringer](students []T, student T) []T {
 	return append(students, student)
 }
 
 func main() {
-	students := []string{} // Empty slice
-	result := addStudent(students, "Michael")
-	result = addStudent(result, "Jennifer")
-	result = addStudent(result, "Elaine")
+	students := []String{} // Empty slice
+	result := addStudent[String](students, "Michael")
+	result = addStudent[String](result, "Jennifer")
+	result = addStudent[String](result, "Elaine")
 	fmt.Println(result)
 
-	students1 := []int{} // Empty slice
-	result1 := addStudentID(students1, 155)
-	result1 = addStudentID(result1, 112)
-	result1 = addStudentID(result1, 120)
+	students1 := []Integer{}
+	result1 := addStudent[Integer](students1, 45)
+	result1 = addStudent[Integer](result1, 64)
+	result1 = addStudent[Integer](result1, 78)
 	fmt.Println(result1)
 
-	students2 := []Student{} // Empty slice
-	result2 := addStudentStruct(students2, Student{"John", 213, 17.5})
-	result2 = addStudentStruct(result2, Student{"James", 111, 18.75})
-	result2 = addStudentStruct(result2, Student{"Marsha", 110, 16.25})
+	students2 := []Student{}
+	result2 := addStudent[Student](students2, Student{"John", 213, 17.5})
+	result2 = addStudent[Student](result2, Student{"James", 111, 18.75})
+	result2 = addStudent[Student](result2, Student{"Marsha", 110, 16.25})
 	fmt.Println(result2)
 }
